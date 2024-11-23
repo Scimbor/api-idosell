@@ -1,6 +1,7 @@
 {
     "name": "api/idosell",
     "description": "Laravel package to interact with Idosell API",
+    "version": "0.0.1",
     "autoload": {
         "psr-4": {
             "Api\\Idosell\\": "src/"
@@ -15,5 +16,7 @@
     },
     "require": {
         "guzzlehttp/guzzle": "^7.0"
-    }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
 }

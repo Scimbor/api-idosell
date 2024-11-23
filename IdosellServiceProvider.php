@@ -1,6 +1,6 @@
 <?php
 
-namespace Vendor\Idosell;
+namespace Api\Idosell;
 
 use Illuminate\Support\ServiceProvider;
 

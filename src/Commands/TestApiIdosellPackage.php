@@ -4,6 +4,7 @@ namespace Api\Idosell\Commands;
 
 use Illuminate\Console\Command;
 use Api\Idosell\Facades\IdosellApi;
+use Illuminate\Support\Facades\Storage;
 
 class TestApiIdosellPackage extends Command
 {
@@ -28,7 +29,16 @@ class TestApiIdosellPackage extends Command
     {
         dump('Command Started: '.$this->signature);
 
-        IdosellApi::checkService();
+        $r = IdosellApi::request('products/products/get', [
+            'params' => [
+                'returnElements' => [
+                    'vat',
+                ],
+            ],
+        ])->post();
+
+        dump('Dane z zapytania');
+        Storage::put('products.json', json_encode($r));
 
         dump('Command Finished: '.$this->signature);
     }

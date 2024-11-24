@@ -14,7 +14,7 @@ class IdosellApiServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/../config/idosell.php' => config_path('idosell.php'),
+            __DIR__.'/config/idosell.php' => config_path('idosell.php'),
         ], 'idosell-config');
 
         if ($this->app->runningInConsole()) {

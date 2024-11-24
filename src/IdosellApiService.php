@@ -2,7 +2,15 @@
 
 namespace Api\Idosell;
 
-class IdosellService
+class IdosellApiService
 {
-    
+    public function checkService()
+    {
+        return true;
+    }
+
+    public function _constructor()
+    {
+        dump('Service is working');
+    }
 }

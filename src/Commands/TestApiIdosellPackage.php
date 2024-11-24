@@ -3,6 +3,7 @@
 namespace Api\Idosell\Commands;
 
 use Illuminate\Console\Command;
+use Api\Idosell\Facades\IdosellApi;
 
 class TestApiIdosellPackage extends Command
 {
@@ -25,6 +26,10 @@ class TestApiIdosellPackage extends Command
      */
     public function handle()
     {
-        dump('Command Started');
+        dump('Command Started: '.$this->signature);
+
+        IdosellApi::checkService();
+
+        dump('Command Finished: '.$this->signature);
     }
 }

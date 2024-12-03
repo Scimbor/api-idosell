@@ -37,6 +37,16 @@ class TestApiIdosellPackage extends Command
             ],
         ])->post();
 
+        // $r = IdosellApi::request('returns/returns', [
+        //     'range' => [
+        //         'date' => [
+        //             'date_begin' => '2002-01-01',
+        //             'date_end' => date('Y-m-d'),
+        //             'dates_type' => 'date_end',
+        //         ],
+        //     ],
+        // ])->get();
+
         dump('Dane z zapytania');
         Storage::put('products.json', json_encode($r));
 

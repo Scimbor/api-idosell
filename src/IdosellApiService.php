@@ -2,23 +2,18 @@
 
 namespace Api\Idosell;
 
-use GuzzleHttp\Client;
 use Exception;
+
+use Api\Idosell\Request;
 
 class IdosellApiService
 {
-    private const API_ENDPOINT = '/api/admin/v3/';
-    private const DEFAULT_REQUEST_METHOD = 'get';
-    private const ALLOWED_REQUEST_METHODS = [
-        'post',
-        'get',
-        'put',
-    ];
-
+    private $request;
     private $config;
-    private $client;
     private $url;
     private $params;
+    private $method;
+    private $results;
     
     public function checkService()
     {
@@ -36,40 +31,47 @@ class IdosellApiService
         $this->config->api_key = trim($this->config->api_key);
         $this->config->domain_url = trim($this->config->domain_url);
 
-        if (empty($this->client)) {
-            $this->client = new Client([
-                // Base URI is used with relative requests
-                'base_uri' => 'https://'.$this->config->domain_url.self::API_ENDPOINT,
-                // You can set any number of default request options.
-                'timeout'  => 180.0,
-                'headers' => [
-                    'X-API-KEY' => $this->config->api_key,
-                ],
-            ]);
-        }
+        $this->request = new Request($this->config);
     }
 
-    public function request(string $url, array $params = [])
+    public function request(string $url)
     {
         $this->url = $url;
-        $this->params = $params;
 
         return $this;
     }
 
-    public function __call($method = self::DEFAULT_REQUEST_METHOD, $args)
+    public function __call($method, $args)
     {
-        // Sprawdzamy, czy metoda jest jedną z dozwolonych
-        if (!in_array($method, self::ALLOWED_REQUEST_METHODS)) {
-            throw new \BadMethodCallException("Metoda $method nie istnieje.");
+        $this->params = ($args[0] ?? []);
+        $this->method = $method;
+        $this->results = $this->request->doRequest($method, $this->url, $this->params);
+
+        if (!isset($this->results->resultsNumberPage) && !isset($this->results->resultsNumberAll)) { 
+            return $this->results;
         }
 
-        $this->params = (($method === self::DEFAULT_REQUEST_METHOD) ? ['query' => $this->params] : ['json' => $this->params]);
+        return $this;
+    }
 
-        $response = $this->client->request($method, $this->url, $this->params);
-        $response = $response->getBody();
+    public function each(callable $callback)
+    {
+        if (!isset($this->results->resultsNumberPage) && !isset($this->results->resultsNumberAll)) {
+            return;
+        }
 
-        // Wywołanie odpowiedniej metody HTTP z URL i parametrami
-        return json_decode($response->getContents());
+        collect($this->results->results)->each(function($item) use (&$callback) {
+            $callback($item);
+        });
+
+        $this->params['params']['resultsPage'] = $this->results->resultsPage + 1;
+        $this->params['params']['results_page'] = $this->results->resultsPage + 1;
+
+        if ($this->params['params']['resultsPage'] == $this->results->resultsNumberPage) {
+            return;
+        }
+
+        $this->results = $this->request->doRequest($this->method, $this->url, $this->params);
+        $this->each($callback);
     }
 }

@@ -29,9 +29,10 @@ class TestApiIdosellPackage extends Command
     {
         dump('Command Started: '.$this->signature);
 
-        $r = IdosellApi::request('products/products/get')->post([
+        // Endpoint with resultsPages
+        IdosellApi::connection('default')->request('products/products/get')->post([
             'params' => [
-                'resultsLimit' => 5,
+                // 'resultsLimit' => 5,
                 'returnElements' => [
                     'vat',
                 ],
@@ -40,17 +41,23 @@ class TestApiIdosellPackage extends Command
             dump('Produkt:'. $product->productId);
         });
 
-        IdosellApi::request('returns/returns')->get([
-            'range' => [
-                'date' => [
-                    'date_begin' => '2002-01-01',
-                    'date_end' => date('Y-m-d'),
-                    'dates_type' => 'date_end',
-                ],
-            ],
-        ])->each(function($return) {
-            dump($return);
-        });
+        // IdosellApi::request('returns/returns')->get([
+        //     'results_limit' => 1,
+        //     'range' => [
+        //         'date' => [
+        //             'date_begin' => '2002-01-01',
+        //             'date_end' => date('Y-m-d'),
+        //             'dates_type' => 'date_end',
+        //         ],
+        //     ],
+        // ])->each(function($return) {
+        //     dump($return);
+        // });
+
+        // $r = IdosellApi::request('refunds/retrieveRefundsList')->get([
+        //     'sourceType' => 'rma',
+        // ]);
+        // dump('Dane', $r);
 
         dump('Command Finished: '.$this->signature);
     }

@@ -10,6 +10,7 @@ class Response
         'results_page' => 'resultsPage',
         'results_limit' => 'resultsLimit',
         'returns' => 'results',
+        'documents' => 'results',
     ];
 
     public function prepare($object)

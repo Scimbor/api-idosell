@@ -8,12 +8,14 @@ use Api\Idosell\Request;
 
 class IdosellApiService
 {
+    const DEFAULT_RESULTS_PAGE_LIMIT = 100;
+
     private $request;
     private $config;
     private $url;
     private $params;
     private $method;
-    private $results;
+    public $results;
     
     public function checkService()
     {
@@ -22,20 +24,40 @@ class IdosellApiService
 
     public function __construct()
     {
-        $this->config = (object) config('idosell');
+        $this->config = (object) config('idosell')['default'];
 
         if (empty($this->config->api_key) || empty($this->config->domain_url)) {
-            throw new Exception("No data to connect with Idosell API");
+            throw new Exception('No data to connect with Idosell API');
         }
 
         $this->config->api_key = trim($this->config->api_key);
         $this->config->domain_url = trim($this->config->domain_url);
+    }
 
-        $this->request = new Request($this->config);
+    public function connection($connection = '')
+    {
+        if (empty($connection)) {
+            return $this;
+        }
+
+        $this->config = config('idosell');
+
+        if (!isset($this->config[$connection])) {
+            throw new Exception('Connection '.$connection.' does not exist');
+        }
+
+        $this->config = (object) $this->config[$connection];
+
+        if (empty($this->config->api_key) || empty($this->config->domain_url)) {
+            throw new Exception('No data to connect with Idosell API for '.$connection.' connection');
+        }
+
+        return $this;
     }
 
     public function request(string $url)
     {
+        $this->request = new Request($this->config);
         $this->url = $url;
 
         return $this;
@@ -45,9 +67,10 @@ class IdosellApiService
     {
         $this->params = ($args[0] ?? []);
         $this->method = $method;
+
         $this->results = $this->request->doRequest($method, $this->url, $this->params);
 
-        if (!isset($this->results->resultsNumberPage) && !isset($this->results->resultsNumberAll)) { 
+        if ((!isset($this->results->resultsNumberPage) && !isset($this->results->resultsNumberAll)) && (!isset($this->params['params']['resultsPage']) && !isset($this->params['params']['results_page']))) { 
             return $this->results;
         }
 
@@ -56,16 +79,16 @@ class IdosellApiService
 
     public function each(callable $callback)
     {
-        if (!isset($this->results->resultsNumberPage) && !isset($this->results->resultsNumberAll)) {
-            return;
-        }
-
         collect($this->results->results)->each(function($item) use (&$callback) {
             $callback($item);
         });
 
-        $this->params['params']['resultsPage'] = $this->results->resultsPage + 1;
-        $this->params['params']['results_page'] = $this->results->resultsPage + 1;
+        // Sometimest API gates have params limits property but not return in response
+
+        if ((isset($this->results->resultsNumberPage) && isset($this->results->resultsNumberAll)) || (isset($this->params['params']['resultsPage']) || isset($this->params['params']['results_page']))) {
+            $this->params['params']['resultsPage'] = $this->results->resultsPage + 1;
+            $this->params['params']['results_page'] = $this->results->resultsPage + 1;
+        }
 
         if ($this->params['params']['resultsPage'] == $this->results->resultsNumberPage) {
             return;

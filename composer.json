@@ -1,0 +1,19 @@
+{
+    "name": "api/idosell",
+    "description": "Laravel package to interact with Idosell API",
+    "version": "0.0.1",
+    "autoload": {
+        "psr-4": {
+            "Api\\Idosell\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Api\\Idosell\\IdosellApiServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

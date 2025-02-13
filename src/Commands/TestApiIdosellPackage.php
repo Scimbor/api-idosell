@@ -4,7 +4,6 @@ namespace Api\Idosell\Commands;
 
 use Illuminate\Console\Command;
 use Api\Idosell\Facades\IdosellApi;
-use Illuminate\Support\Facades\Storage;
 
 class TestApiIdosellPackage extends Command
 {
@@ -30,16 +29,16 @@ class TestApiIdosellPackage extends Command
         dump('Command Started: '.$this->signature);
 
         // Endpoint with resultsPages
-        IdosellApi::connection('default')->request('products/products/get')->post([
-            'params' => [
-                // 'resultsLimit' => 5,
-                'returnElements' => [
-                    'vat',
-                ],
-            ],
-        ])->each(function($product) {
-            dump('Produkt:'. $product->productId);
-        });
+        // IdosellApi::connection('default')->request('products/products/get')->post([
+        //     'params' => [
+        //         // 'resultsLimit' => 5,
+        //         'returnElements' => [
+        //             'vat',
+        //         ],
+        //     ],
+        // ])->each(function($product) {
+        //     dump('Produkt:'. $product->productId);
+        // });
 
         // IdosellApi::request('returns/returns')->get([
         //     'results_limit' => 1,
@@ -58,6 +57,56 @@ class TestApiIdosellPackage extends Command
         //     'sourceType' => 'rma',
         // ]);
         // dump('Dane', $r);
+
+        // Example with adding data to API
+        // $r = IdosellApi::request('clients/clients')->post([
+        //     'settings' => [
+        //         'send_mail' => false,
+        //         'send_sms' => false,
+        //     ],
+        //     'params' => [
+        //         'clients' => [
+        //             [
+        //                 'code_extern' => 'test_account_'.time(),
+        //                 'email' => 'test_email@'.time().'.com',
+        //                 'firstname' => 'Testowe_imie',
+        //                 'lastname' => 'Testowe_nazwisko',
+        //                 'street' => 'Wojska Polskiego 100/2a',
+        //                 'zipcode' => '73-100',
+        //                 'city' => 'Szczecin',
+        //                 'country_code' => 'pl',
+        //                 'phone' => '111111111',
+        //                 'wholesaler' => false,
+        //                 'language' => 'pol',
+        //                 'shops' => [
+        //                     1,
+        //                 ],
+        //                 'sms_newsletter' => false,
+        //                 'email_newsletter' => true,
+        //             ]
+        //         ],
+        //     ],
+        // ]);
+
+        // dump('Dodawanie klienta do bazy: ',$r);
+
+        // Example with updating data in API
+        // $r = IdosellApi::request('clients/clients')->put([
+        //     'clientsSettings' => [
+        //         'clientSettingSendMail' => false,
+        //         'clientSettingSendSms' => false,
+        //     ],
+        //     'params' => [
+        //         'clients' => [
+        //             [
+        //                 'clientLogin' => 'test_email@1739464172.com',
+        //                 'clientNote' => 'Updated at '.date('Y-m-d H:i:s'),
+        //             ]
+        //         ],
+        //     ],
+        // ]);
+
+        // dump('Aktualizacja klienta w bazie: ',$r);
 
         dump('Command Finished: '.$this->signature);
     }

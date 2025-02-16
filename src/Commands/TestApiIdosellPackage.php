@@ -53,60 +53,60 @@ class TestApiIdosellPackage extends Command
             dump($return);
         });
 
-        // $r = IdosellApi::request('refunds/retrieveRefundsList')->get([
-        //     'sourceType' => 'rma',
-        // ]);
-        // dump('Dane', $r);
+        $r = IdosellApi::request('refunds/retrieveRefundsList')->get([
+            'sourceType' => 'rma',
+        ]);
+        dump('Dane', $r);
 
         // Example with adding data to API
-        // $r = IdosellApi::request('clients/clients')->post([
-        //     'settings' => [
-        //         'send_mail' => false,
-        //         'send_sms' => false,
-        //     ],
-        //     'params' => [
-        //         'clients' => [
-        //             [
-        //                 'code_extern' => 'test_account_'.time(),
-        //                 'email' => 'test_email@'.time().'.com',
-        //                 'firstname' => 'Testowe_imie',
-        //                 'lastname' => 'Testowe_nazwisko',
-        //                 'street' => 'Wojska Polskiego 100/2a',
-        //                 'zipcode' => '73-100',
-        //                 'city' => 'Szczecin',
-        //                 'country_code' => 'pl',
-        //                 'phone' => '111111111',
-        //                 'wholesaler' => false,
-        //                 'language' => 'pol',
-        //                 'shops' => [
-        //                     1,
-        //                 ],
-        //                 'sms_newsletter' => false,
-        //                 'email_newsletter' => true,
-        //             ]
-        //         ],
-        //     ],
-        // ]);
+        $r = IdosellApi::request('clients/clients')->post([
+            'settings' => [
+                'send_mail' => false,
+                'send_sms' => false,
+            ],
+            'params' => [
+                'clients' => [
+                    [
+                        'code_extern' => 'test_account_'.time(),
+                        'email' => 'test_email@'.time().'.com',
+                        'firstname' => 'Testowe_imie',
+                        'lastname' => 'Testowe_nazwisko',
+                        'street' => 'Wojska Polskiego 100/2a',
+                        'zipcode' => '73-100',
+                        'city' => 'Szczecin',
+                        'country_code' => 'pl',
+                        'phone' => '111111111',
+                        'wholesaler' => false,
+                        'language' => 'pol',
+                        'shops' => [
+                            1,
+                        ],
+                        'sms_newsletter' => false,
+                        'email_newsletter' => true,
+                    ]
+                ],
+            ],
+        ]);
 
-        // dump('Dodawanie klienta do bazy: ',$r);
+        dump('Dodawanie klienta do bazy: ',$r);
 
         // Example with updating data in API
-        // $r = IdosellApi::request('clients/clients')->put([
-        //     'clientsSettings' => [
-        //         'clientSettingSendMail' => false,
-        //         'clientSettingSendSms' => false,
-        //     ],
-        //     'params' => [
-        //         'clients' => [
-        //             [
-        //                 'clientLogin' => 'test_email@1739464172.com',
-        //                 'clientNote' => 'Updated at '.date('Y-m-d H:i:s'),
-        //             ]
-        //         ],
-        //     ],
-        // ]);
+        $r = IdosellApi::request('clients/clients')->put([
+            'clientsSettings' => [
+                'clientSettingSendMail' => false,
+                'clientSettingSendSms' => false,
+            ],
+            'params' => [
+                'clients' => [
+                    [
+                        'clientLogin' => 'test_email@1739464172.com',
+                        'clientNote' => 'Updated at '.date('Y-m-d H:i:s'),
+                    ]
+                ],
+            ],
+        ]);
 
-        // dump('Aktualizacja klienta w bazie: ',$r);
+        dump('Aktualizacja klienta w bazie: ',$r);
 
         dump('Command Finished: '.$this->signature);
     }

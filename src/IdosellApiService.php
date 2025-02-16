@@ -64,7 +64,6 @@ class IdosellApiService
             $this->params['params']['results_page'] = $this->results->resultsPage + 1;
         }
 
-
         return $this;
     }
 

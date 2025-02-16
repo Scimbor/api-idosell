@@ -5,6 +5,7 @@ namespace Api\Idosell;
 use Exception;
 
 use Api\Idosell\Request;
+use Api\Idosell\Response;
 
 class IdosellApiService
 {
@@ -48,10 +49,21 @@ class IdosellApiService
 
         $this->results = $this->request->doRequest($method, $this->url, $this->params);
 
-        // If endpoint has not pagitnation
-        if ((!isset($this->results->resultsNumberPage) && !isset($this->results->resultsNumberAll)) && (!isset($this->params['params']['resultsPage']) && !isset($this->params['params']['results_page']))) { 
+        if (empty($this->results)) {
             return $this->results;
         }
+
+        // If endpoint has not pagination
+        if (isset($this->results->type) && $this->results->type == Response::RESPONSE_SINGLE_TYPE) {
+            return $this->results;
+        }
+        
+        // Sometimest API gates have params limits property but not return in response
+        if ((isset($this->results->resultsNumberPage) && isset($this->results->resultsNumberAll)) || (isset($this->params['params']['resultsPage']) || isset($this->params['params']['results_page']))) {
+            $this->params['params']['resultsPage'] = $this->results->resultsPage + 1;
+            $this->params['params']['results_page'] = $this->results->resultsPage + 1;
+        }
+
 
         return $this;
     }
@@ -61,12 +73,6 @@ class IdosellApiService
         collect($this->results->results)->each(function($item) use (&$callback) {
             $callback($item);
         });
-
-        // Sometimest API gates have params limits property but not return in response
-        if ((isset($this->results->resultsNumberPage) && isset($this->results->resultsNumberAll)) || (isset($this->params['params']['resultsPage']) || isset($this->params['params']['results_page']))) {
-            $this->params['params']['resultsPage'] = $this->results->resultsPage + 1;
-            $this->params['params']['results_page'] = $this->results->resultsPage + 1;
-        }
 
         if ($this->params['params']['resultsPage'] == $this->results->resultsNumberPage) {
             return;

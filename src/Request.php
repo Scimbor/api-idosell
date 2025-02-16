@@ -29,6 +29,10 @@ class Request
                 'X-API-KEY' => $this->config->api_key,
             ])->timeout(self::TIMEOUT)->retry(self::RETRY);
         }
+
+        if (empty($this->response)) {
+            $this->response = new Response();
+        }
     }
 
     public function doRequest($method, $endpoint, $params = [])
@@ -36,8 +40,6 @@ class Request
         if (!in_array($method, self::ALLOWED_REQUEST_METHODS)) {
             throw new \BadMethodCallException("Metoda $method nie istnieje.");
         }
-
-        $this->response = new Response();
 
         $params['resultsLimit'] = self::DEFAULT_PAGE_LIMIT;
         $params['results_limit'] = self::DEFAULT_PAGE_LIMIT;

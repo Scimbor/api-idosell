@@ -15,6 +15,7 @@ class IdosellApiService
     private $url;
     private $params;
     private $method;
+    private $connection;
     public $results;
     
     public function checkService()
@@ -22,42 +23,19 @@ class IdosellApiService
         return true;
     }
 
-    public function __construct()
+    public function __construct(string $connection = '')
     {
-        $this->config = (object) config('idosell')['default'];
-
-        if (empty($this->config->api_key) || empty($this->config->domain_url)) {
-            throw new Exception('No data to connect with Idosell API');
-        }
-
-        $this->config->api_key = trim($this->config->api_key);
-        $this->config->domain_url = trim($this->config->domain_url);
+        $this->connection = new Connection($connection);
     }
 
-    public function connection($connection = '')
+    public static function connection($connection = '')
     {
-        if (empty($connection)) {
-            return $this;
-        }
-
-        $this->config = config('idosell');
-
-        if (!isset($this->config[$connection])) {
-            throw new Exception('Connection '.$connection.' does not exist');
-        }
-
-        $this->config = (object) $this->config[$connection];
-
-        if (empty($this->config->api_key) || empty($this->config->domain_url)) {
-            throw new Exception('No data to connect with Idosell API for '.$connection.' connection');
-        }
-
-        return $this;
+        return new self($connection);
     }
 
     public function request(string $url)
     {
-        $this->request = new Request($this->config);
+        $this->request = new Request($this->connection->getConfig());
         $this->url = $url;
 
         return $this;
@@ -70,6 +48,7 @@ class IdosellApiService
 
         $this->results = $this->request->doRequest($method, $this->url, $this->params);
 
+        // If endpoint has not pagitnation
         if ((!isset($this->results->resultsNumberPage) && !isset($this->results->resultsNumberAll)) && (!isset($this->params['params']['resultsPage']) && !isset($this->params['params']['results_page']))) { 
             return $this->results;
         }
@@ -84,7 +63,6 @@ class IdosellApiService
         });
 
         // Sometimest API gates have params limits property but not return in response
-
         if ((isset($this->results->resultsNumberPage) && isset($this->results->resultsNumberAll)) || (isset($this->params['params']['resultsPage']) || isset($this->params['params']['results_page']))) {
             $this->params['params']['resultsPage'] = $this->results->resultsPage + 1;
             $this->params['params']['results_page'] = $this->results->resultsPage + 1;

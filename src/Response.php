@@ -14,6 +14,7 @@ class Response
         'results_limit' => 'resultsLimit',
         'returns' => 'results',
         'documents' => 'results',
+        'Results' => 'results',
     ];
 
     public function prepare($object)

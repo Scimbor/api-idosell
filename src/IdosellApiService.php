@@ -56,7 +56,7 @@ class IdosellApiService
         if (isset($this->results->type) && $this->results->type == Response::RESPONSE_SINGLE_TYPE) {
             return $this->results;
         }
-        
+
         // Sometimest API gates have params limits property but not return in response
         if ((isset($this->results->resultsNumberPage) && isset($this->results->resultsNumberAll)) || (isset($this->params['params']['resultsPage']) || isset($this->params['params']['results_page']))) {
             $this->params['params']['resultsPage'] = $this->results->resultsPage + 1;

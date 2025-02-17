@@ -28,7 +28,7 @@ class TestApiIdosellPackage extends Command
     {
         dump('Command Started: '.$this->signature);
 
-        // Endpoint with resultsPages
+        // // Endpoint with resultsPages
         IdosellApi::connection('default')->request('products/products/get')->post([
             'params' => [
                 // 'resultsLimit' => 5,
@@ -100,8 +100,23 @@ class TestApiIdosellPackage extends Command
                 ],
             ],
         ]);
-
+      
         dump('Aktualizacja klienta w bazie: ',$r);
+
+        // Example with getting orders
+        IdosellApi::connection('default')->request('orders/orders/get')->post([
+            'params' => [
+                'ordersStatuses' => [
+                    'new',
+                    'finished',
+                    'false',
+                    'on_order',
+                    'ready'
+                ],
+            ],
+        ])->each(function($order) {
+            dump('Zamówienie:'. $order->orderSerialNumber);
+        });
 
         dump('Command Finished: '.$this->signature);
     }

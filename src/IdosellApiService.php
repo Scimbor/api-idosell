@@ -12,7 +12,6 @@ class IdosellApiService
     const DEFAULT_RESULTS_PAGE_LIMIT = 100;
 
     private $request;
-    private $config;
     private $url;
     private $params;
     private $method;

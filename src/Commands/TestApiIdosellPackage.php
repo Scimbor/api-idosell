@@ -53,11 +53,6 @@ class TestApiIdosellPackage extends Command
             dump($return);
         });
 
-        $r = IdosellApi::request('refunds/retrieveRefundsList')->get([
-            'sourceType' => 'rma',
-        ]);
-        dump('Dane', $r);
-
         // Example with adding data to API
         $r = IdosellApi::request('clients/clients')->post([
             'settings' => [

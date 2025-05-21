@@ -26,22 +26,23 @@ class TestApiIdosellPackage extends Command
      */
     public function handle()
     {
-        dump('Command Started: '.$this->signature);
+        dump('Command Started: ' . $this->signature);
 
-        // // Endpoint with resultsPages
-        IdosellApi::connection('default')->request('products/products/get')->post([
+        IdosellApi::request('products/products/search')->post([
             'params' => [
-                // 'resultsLimit' => 5,
+                'resultsLimit' => 5,
+                'resultsPage' => 1,
                 'returnElements' => [
-                    'vat',
+                    'code',
                 ],
             ],
-        ])->each(function($product) {
-            dump('Produkt:'. $product->productId);
+        ])->each(function ($product) {
+            dump($product);
         });
 
+        dump('Pobieranie zwrotów');
+
         IdosellApi::request('returns/returns')->get([
-            'results_limit' => 1,
             'range' => [
                 'date' => [
                     'date_begin' => '2002-01-01',
@@ -52,6 +53,8 @@ class TestApiIdosellPackage extends Command
         ])->each(function($return) {
             dump($return);
         });
+        
+        dump('Pobieranie zwrotów zakończone');
 
         // Example with adding data to API
         $r = IdosellApi::request('clients/clients')->post([
@@ -85,7 +88,7 @@ class TestApiIdosellPackage extends Command
 
         dump('Dodawanie klienta do bazy: ',$r);
 
-        // Example with updating data in API
+        // // Example with updating data in API
         $r = IdosellApi::request('clients/clients')->put([
             'clientsSettings' => [
                 'clientSettingSendMail' => false,
@@ -100,11 +103,11 @@ class TestApiIdosellPackage extends Command
                 ],
             ],
         ]);
-      
+
         dump('Aktualizacja klienta w bazie: ',$r);
 
         // Example with getting orders
-        IdosellApi::connection('default')->request('orders/orders/get')->post([
+        IdosellApi::connection('default')->request('orders/orders/search')->post([
             'params' => [
                 'ordersStatuses' => [
                     'new',
@@ -115,7 +118,7 @@ class TestApiIdosellPackage extends Command
                 ],
             ],
         ])->each(function($order) {
-            dump('Zamówienie:'. $order->orderSerialNumber);
+            dd('Zamówienie:'. $order->orderSerialNumber);
         });
 
         dump('Command Finished: '.$this->signature);

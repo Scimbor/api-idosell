@@ -31,11 +31,11 @@ class Connection
         $fullConfig = $this->getFullConfig();
 
         // If no connection specified, use default from config or 'default'
-        $this->connectionName = (empty($connection)) ? 'default' : $connection;
+        $this->connectionName = (empty($connection) ? 'default' : $connection);
 
         // Check if connection exists
-        if (!isset($fullConfig[$this->connectionName])) {
-            $availableConnections = array_keys($fullConfig ?? []);
+        if (!isset($fullConfig['connections'][$this->connectionName])) {
+            $availableConnections = array_keys($fullConfig['connections'] ?? []);
             throw new IdosellApiException(
                 "Connection '{$this->connectionName}' not found in configuration. " .
                 "Available connections: " . implode(', ', $availableConnections)
@@ -43,7 +43,7 @@ class Connection
         }
 
         // Convert connection config to object
-        $connectionConfig = $fullConfig[$this->connectionName];
+        $connectionConfig = $fullConfig['connections'][$this->connectionName];
         $this->config = (object) [
             'api_key' => $connectionConfig['api_key'] ?? null,
             'domain_url' => $connectionConfig['domain_url'] ?? null

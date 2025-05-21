@@ -1,17 +1,28 @@
 {
     "name": "api/idosell",
-    "description": "Laravel package to interact with Idosell API",
+    "description": "IdoSell API Integration Package",
+    "type": "library",
     "version": "0.0.1",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "Api\\Idosell\\": "src/"
         }
     },
+    "authors": [
+        {
+            "name": "Marcin Scimborksi",
+            "email": "marcin.scim@gmail.com"
+        }
+    ],
     "extra": {
         "laravel": {
             "providers": [
                 "Api\\Idosell\\IdosellApiServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "IdosellApi": "Api\\Idosell\\Facades\\IdosellApi"
+            }
         }
     },
     "minimum-stability": "stable",
